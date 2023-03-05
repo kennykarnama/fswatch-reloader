@@ -2,9 +2,24 @@
 #include<stdlib.h>
 #include<errno.h>
 #include<yaml.h>
+#include <libfswatch/c/libfswatch.h>
 
 #include "arraystring.h" // automically resolve in local folder
 #include "reloader.h"
+
+void fsw_callback(fsw_cevent const *const events, const unsigned int event_num, void *data) {
+    // cast to reloader_t
+    struct reloader_t *reloader = (struct reloader_t*)data;
+    if (*events->flags > PlatformSpecific && *events->flags <= MovedTo) {
+        printf("got event: %s\n", fsw_get_event_flag_name(*events->flags));
+        printf("scripts...\n");
+        for (size_t i = 0; i < reloader->scripts->used; i++) {
+            printf("value=%s\n", reloader->scripts->array[i]);
+        }
+    }
+
+    return;
+}
 
 int main(int argc, char *argv[]) {
     if (argc < 1) {
@@ -84,9 +99,29 @@ int main(int argc, char *argv[]) {
     fclose(file);
 
     printf("watchDir=%s\n", reloader.watch_dir);
-    printf("scripts...\n");
-    for (size_t i = 0; i < reloader.scripts->used; i++) {
-        printf("value=%s\n", reloader.scripts->array[i]);
+    
+    printf("set watchdir to %s\n", reloader.watch_dir);
+
+    int watch_status;
+    // trigger fswatch
+    fsw_init_library();
+    const FSW_HANDLE handle = fsw_init_session(system_default_monitor_type);
+    watch_status = fsw_add_path(handle, reloader.watch_dir);
+    if (watch_status != FSW_OK) {
+        printf("error fsw.add_path watch_dir=%s error_code=%d", reloader.watch_dir, watch_status);
+        return -1;
+    }
+    watch_status = fsw_set_callback(handle, fsw_callback, &reloader);
+    if (watch_status != FSW_OK) {
+        printf("error fsw.set_callback watch_dir=%s error_code=%d", reloader.watch_dir, watch_status);
+        return -1;
+    }
+    fsw_set_verbose(1);
+    
+    watch_status = fsw_start_monitor(handle); // blocking call. TODO: start in different thread so we can gracefully shutdown if a SIGINT emitted. 
+    if (watch_status != FSW_OK) {
+        printf("error fsw.set_callback watch_dir=%s error_code=%d", reloader.watch_dir, watch_status);
+        return -1;
     }
 
     free(reloader.watch_dir);

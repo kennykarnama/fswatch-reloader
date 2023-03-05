@@ -4,7 +4,9 @@ simple fswatch-reloader
 
 ## how to compile ?
 
-gcc main.c -o fswatch-reloader -lyaml
+dont forget to run `sudo ldconfig` in order to refresh sharedlib
+
+gcc main.c -o fswatch-reloader -lyaml -lfswatch
 
 ## yaml def
 
@@ -19,3 +21,4 @@ gcc main.c -o fswatch-reloader -lyaml
 ## deps
 
 - libyaml
+- libfswatch (1.17.1)
