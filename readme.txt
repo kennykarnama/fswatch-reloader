@@ -8,13 +8,17 @@ dont forget to run `sudo ldconfig` in order to refresh sharedlib
 
 gcc main.c -o fswatch-reloader -lyaml -lfswatch -lexplain
 
+## How to use
+
+fswatch-reloader <your yaml def>
+
 ## yaml def
 
 -
- watch_dir: .
+ watch_dir: <dir>
 -
  scripts:
-   - ls
+   - ls <sequence of scripts to be executed>
    - whoami
 -
 
