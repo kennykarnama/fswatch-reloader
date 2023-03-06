@@ -6,7 +6,7 @@ simple fswatch-reloader
 
 dont forget to run `sudo ldconfig` in order to refresh sharedlib
 
-gcc main.c -o fswatch-reloader -lyaml -lfswatch
+gcc main.c -o fswatch-reloader -lyaml -lfswatch -lexplain
 
 ## yaml def
 
@@ -22,3 +22,4 @@ gcc main.c -o fswatch-reloader -lyaml -lfswatch
 
 - libyaml
 - libfswatch (1.17.1)
+- libexplain

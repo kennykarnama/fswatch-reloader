@@ -1,6 +1,8 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<errno.h>
+#include <unistd.h>
+#include <libexplain/pclose.h>
 #include<yaml.h>
 #include <libfswatch/c/libfswatch.h>
 
@@ -14,7 +16,29 @@ void fsw_callback(fsw_cevent const *const events, const unsigned int event_num, 
         printf("got event: %s\n", fsw_get_event_flag_name(*events->flags));
         printf("scripts...\n");
         for (size_t i = 0; i < reloader->scripts->used; i++) {
-            printf("value=%s\n", reloader->scripts->array[i]);
+            char *script = reloader->scripts->array[i];
+            printf("executing script %s\n", script);
+            
+            FILE *fp;
+            int status;
+            char cmd_output[1024];
+
+            fp = popen(script, "r");
+            if (fp == NULL) {
+                printf("err script.exec script=%s error_code=%d problem=%s\n", script, errno, strerror(errno));
+                exit(EXIT_FAILURE);
+            }
+
+            printf("script=%s output\n", script);
+            while (fgets(cmd_output, 1024, fp) != NULL) {
+                printf("%s", cmd_output);
+            }
+            
+            int pclose_status = pclose(fp);
+            if (pclose_status < 0) {
+                printf("err script.exec.close problem=%s\n", explain_pclose(fp));
+                exit(EXIT_FAILURE);
+            }
         }
     }
 
