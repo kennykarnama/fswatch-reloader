@@ -23,8 +23,8 @@ jobs:
       - name: compile
         run: gcc main.c -o fswatch-reloader -lyaml -lfswatch -lexplain
       - name: GH Release
-        uses: softprops/action-gh-release@v0.1.15
+        uses: softprops/action-gh-release@v1
         with:
+          token: ${{ secrets.fswatch-reloader-action }}
           files: |
              fswatch-reloader
-          token: ${{ secrets.fswatch-reloader-action }}
