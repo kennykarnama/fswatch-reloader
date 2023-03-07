@@ -8,7 +8,9 @@ jobs:
       - name: update apt repository
         run: sudo apt-get update
       - name: install dependency
-        run: sudo apt-get install build-essential libyaml-dev libfswatch-dev libexplain
+        run: sudo apt-get install build-essential g++ libyaml-dev libexplain-dev
+      - name: install libfswatch
+        run: wget https://github.com/emcrisostomo/fswatch/releases/download/1.17.1/fswatch-1.17.1.tar.gz && tar xzvf fswatch-1.17.1.tar.gz && cd fswatch-1.17.1 && configure && make && sudo make install
       - name: Check out repository code
         uses: actions/checkout@v3
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
