@@ -28,4 +28,3 @@ jobs:
           token: ${{ secrets.fswatch-reloader-action }}
           files: |
              fswatch-reloader
-          token: ${{ secrets.fswatch-reloader-action }}
