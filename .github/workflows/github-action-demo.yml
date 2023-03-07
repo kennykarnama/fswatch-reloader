@@ -8,7 +8,7 @@ jobs:
       - name: update apt repository
         run: sudo apt-get update
       - name: install dependency
-        run: sudo apt-get install build-essential && libyaml-dev && libfswatch-dev && libexplain
+        run: sudo apt-get install build-essential libyaml-dev libfswatch-dev libexplain
       - name: Check out repository code
         uses: actions/checkout@v3
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
